@@ -62,11 +62,12 @@ Ce projet vise à prédire la présence d'une maladie cardiaque à partir de don
 - classification sur de nouveaux patients
 
 ---
-## Collaboration sur le projet
--YATABARE Cheikna Amala
--DIOP Ousseynou
--GADO Giovanni
--Thiam OMAR
+## 🤝 Contributeurs
+
+[![Cheikna Amala YATABARE](https://img.shields.io/badge/Contributor-Cheikna_Amala-blue)]
+[![Ousseynou DIOP](https://img.shields.io/badge/Contributor-Ousseynou_Diop-green)] 
+[![Giovanni GADO](https://img.shields.io/badge/Contributor-Giovanni_Gado-orange)]
+[![Omar THIAM](https://img.shields.io/badge/Contributor-Omar_Thiam-red)]
 
 ```
 
