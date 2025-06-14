@@ -33,7 +33,6 @@ Ce projet vise à prédire la présence d'une maladie cardiaque à partir de don
 - Split train/test stratifié
 
 ### 🤖 Algorithmes implémentés
-### 🤖 Algorithmes implémentés
 
 | Code  | Algorithme                   | Bibliothèque   | Optimisé | Type d'algorithme       |
 |-------|------------------------------|----------------|----------|-------------------------|
@@ -63,9 +62,17 @@ Ce projet vise à prédire la présence d'une maladie cardiaque à partir de don
 - classification sur de nouveaux patients
 
 ---
+## Collaboration sur le projet
+-YATABARE Cheikna Amala
+-DIOP Ousseynou
+-GADO Giovanni
+-Thiam OMAR
+
+```
 
 ## 🛠️ Installation
 
 1. Cloner le dépôt :
 ```bash
 git clone https://github.com/OusseynouDIOP16/Projet_ML_2/tree/main
+
