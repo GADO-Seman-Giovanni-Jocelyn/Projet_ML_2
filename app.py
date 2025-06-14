@@ -132,7 +132,7 @@ st.markdown("""
 
 PAGES = {
     "Introduction": page_introduction,
-    "Modélisation": lambda: page_modelisation(data),  # Passer data ici
+    "Modélisation": lambda: page_modelisation(),  # Passer data ici
     "Visualisation": lambda:afficher_page_visualisation(data),
     "Prédiction": page_prediction   # Pas besoin de data ici
 }
