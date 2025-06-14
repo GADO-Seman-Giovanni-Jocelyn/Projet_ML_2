@@ -6,7 +6,7 @@
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-Un projet complet de machine learning pour la prédiction des maladies cardiaques avec interface interactive.
+Un projet complet de machine learning pour la classification des maladies cardiaques .
 
 ---
 
