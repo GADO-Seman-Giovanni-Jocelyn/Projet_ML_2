@@ -9,116 +9,170 @@ from prediction import page_prediction
 st.set_page_config(page_title="Classification des maladies cardiaques", page_icon="📊", layout="wide")
 
 st.markdown("""
-    <style>
-    /* Arrière-plan général */
+<style>
+    /* ================ */
+    /* VARIABLES COULEURS */
+    /* ================ */
+    :root {
+        /* Palette médicale/santé */
+        --bleu-hygiene: #1a73e8;       /* Couleur primaire */
+        --bleu-light: #e8f0fe;         /* Arrière-plan */
+        --vert-sante: #34a853;         /* Succès/positif */
+        --rouge-alerte: #ea4335;       /* Erreur/danger */
+        --orange-vitamine: #fb8c00;    /* Accent/attention */
+        --gris-medical: #5f6368;       /* Texte secondaire */
+        --blanc-pur: #ffffff;          /* Fond */
+    }
+
+    /* =================== */
+    /* STRUCTURE PRINCIPALE */
+    /* =================== */
     .main {
-        background-color: #f0f6ff;
-        background-image: linear-gradient(135deg, #e3f2fd, #ffffff);
+        background-color: var(--bleu-light);
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(26, 115, 232, 0.05) 0%, transparent 20%);
     }
 
-    /* Titres en bleu profond avec ombre légère */
-    h1, h2, h3, h4, h5, h6 {
-        color: #1565c0;
-        font-family: 'Segoe UI', sans-serif;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Sous-titres */
-    .subheader {
-        font-size: 20px;
-        color: #333333;
-        font-family: 'Segoe UI', sans-serif;
-        font-weight: 600;
-    }
-
-    /* Boutons Streamlit */
-    .stButton button {
-        background-color: #1565c0;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 600;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .stButton button:hover {
-        background-color: #0d47a1;
-        transform: translateY(-2px);
-    }
-
-    /* Champs de saisie */
-    .stTextInput input, .stNumberInput input, .stSelectbox select {
-        background-color: #ffffff;
-        border-radius: 8px;
-        border: 1px solid #b0bec5;
-        padding: 10px;
-        font-size: 16px;
-        transition: border 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .stTextInput input:focus, .stNumberInput input:focus, .stSelectbox select:focus {
-        border-color: #1565c0;
-        box-shadow: 0 0 6px rgba(21, 101, 192, 0.4);
-    }
-
-    /* Sélecteurs */
-    .stSelectbox select {
-        color: #222222;
-        background-color: #f7faff;
-        border: 1px solid #90caf9;
-        border-radius: 8px;
-        padding: 8px;
-    }
-
-    /* Alertes/info */
-    .stAlert {
-        background-color: #e3f2fd;
-        border-left: 5px solid #2196f3;
-        color: #0d47a1;
-        padding: 12px;
-        border-radius: 8px;
-        font-weight: 500;
-    }
-
-    /* Conteneur principal */
     .block-container {
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        background-color: #ffffff;
+        background-color: var(--blanc-pur);
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: 1.5rem;
     }
 
-    /* Espacement */
-    .stSlider, .stNumberInput, .stSelectbox {
-        margin-bottom: 20px;
+    /* ============= */
+    /* TYPOGRAPHIE */
+    /* ============= */
+    h1 {
+        color: var(--bleu-hygiene);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        border-bottom: 3px solid var(--orange-vitamine);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+        margin-bottom: 1.5rem;
     }
 
-    /* Sidebar */
-    .sidebar .sidebar-content {
-        font-family: 'Roboto', sans-serif;
-        color: #333333;
-    }
-
-    .sidebar .sidebar-content h2 {
-        color: #1565c0;
-    }
-
-    /* Titres centrés */
-    .stMarkdown h1, .stMarkdown h2 {
-        text-align: center;
-    }
-
-    /* Graphiques avec fond clair */
-    .element-container svg {
+    h2 {
+        color: var(--bleu-hygiene);
+        background-color: rgba(26, 115, 232, 0.1);
+        padding: 0.75rem 1rem;
         border-radius: 8px;
-        background-color: #ffffff;
+        font-size: 1.8rem;
+        margin-top: 2.5rem;
     }
-    </style>
-""", unsafe_allow_html=True)
 
+    h3 {
+        color: var(--gris-medical);
+        font-size: 1.4rem;
+        margin: 1.8rem 0 1rem 0;
+    }
+
+    /* ================= */
+    /* COMPOSANTS CLAIRS */
+    /* ================= */
+    /* Boutons principaux */
+    .stButton>button {
+        background-color: var(--bleu-hygiene);
+        color: white;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+    }
+
+    .stButton>button:hover {
+        background-color: #0d5fd1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+
+    /* Zones de saisie */
+    .stTextInput>div>div>input,
+    .stNumberInput>div>div>input,
+    .stSelectbox>div>select {
+        border: 2px solid #dfe1e5;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s;
+    }
+
+    .stTextInput>div>div>input:focus,
+    .stNumberInput>div>div>input:focus,
+    .stSelectbox>div>select:focus {
+        border-color: var(--bleu-hygiene);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    /* ================== */
+    /* SECTIONS SPÉCIFIQUES */
+    /* ================== */
+    /* Section Résultats */
+    .stAlert {
+        border-left: 4px solid var(--bleu-hygiene);
+        background-color: rgba(26, 115, 232, 0.05);
+        border-radius: 0 12px 12px 0;
+    }
+
+    /* Section Paramètres */
+    .stExpander {
+        border: 1px solid rgba(26, 115, 232, 0.2);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .stExpander .st-emotion-cache-1q7spjk {
+        background-color: rgba(26, 115, 232, 0.05);
+    }
+
+    /* Tableaux de résultats */
+    .stDataFrame {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* =============== */
+    /* ÉLÉMENTS GRAPHIQUES */
+    /* =============== */
+    /* Graphiques */
+    .element-container .stPlotlyChart {
+        border-radius: 12px;
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Barre de progression */
+    .stProgress>div>div>div {
+        background-color: var(--bleu-hygiene);
+    }
+
+    /* ============= */
+    /* SIDEBAR */
+    /* ============= */
+    .sidebar .sidebar-content {
+        background-color: var(--blanc-pur);
+        border-right: 1px solid rgba(26, 115, 232, 0.1);
+    }
+
+    /* ============= */
+    /* RESPONSIVE */
+    /* ============= */
+    @media (max-width: 768px) {
+        .block-container {
+            padding: 1.5rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
 
 
 # Ajouter un titre principal
