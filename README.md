@@ -33,14 +33,18 @@ Ce projet vise à prédire la présence d'une maladie cardiaque à partir de don
 - Split train/test stratifié
 
 ### 🤖 Algorithmes implémentés
-| Modèle | Bibliothèque | Optimisé? |
-|--------|--------------|-----------|
-| Random Forest | scikit-learn | ✅ |
-| XGBoost | xgboost | ✅ |
-| SVM | scikit-learn | ✅ |
-| Régression Logistique | scikit-learn | ✅ |
-| KNN | scikit-learn | ✅ |
+### 🤖 Algorithmes implémentés
 
+| Code  | Algorithme                   | Bibliothèque   | Optimisé | Type d'algorithme       |
+|-------|------------------------------|----------------|----------|-------------------------|
+| rf    | Random Forest                | scikit-learn   | ✅       | Ensemble (Bagging)      |
+| xgb   | XGBoost                      | xgboost        | ✅       | Ensemble (Boosting)     |
+| mlp   | Multi-Layer Perceptron        | scikit-learn   | ✅       | Réseau de neurones     |
+| dt    | Decision Tree                 | scikit-learn   | ✅       | Arbre de décision      |
+| svm   | Support Vector Machine        | scikit-learn   | ✅       | SVM                    |
+| logreg| Logistic Regression           | scikit-learn   | ✅       | Modèle linéaire        |
+| knn   | k-Nearest Neighbors           | scikit-learn   | ✅       | Apprentissage par instance |
+| nb    | Naive Bayes                   | scikit-learn   | ✅       | Modèle probabiliste    |
 ### 📈 Évaluation
 - Métriques complètes :
   - ✅ Accuracy
