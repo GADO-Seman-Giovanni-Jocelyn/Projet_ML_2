@@ -8,13 +8,13 @@ from sklearn.metrics import (
     classification_report, confusion_matrix,
     accuracy_score, precision_score, recall_score, f1_score
 )
-from sklearn.model_selection import train_test_split
 
-# Données
+# Configuration
 DATA_PATH = 'clean_heart_data.csv'
 TARGET = 'num'
+PIPELINES_DIR = "Pipeline"
 
-# Mapping noms abrégés -> noms complets
+# Mapping des noms de modèles
 model_name_map = {
     "rf": "Random Forest",
     "xgb": "XGBoost",
@@ -27,84 +27,112 @@ model_name_map = {
 }
 
 @st.cache_data
-
-def page_modelisation():
-    st.title("📊 Modélisation - Évaluation des Modèles de Classification")
-
-
-
+def load_test_data():
+    """Charge les données de test une seule fois"""
     X_test = pd.read_csv('data/X_test.csv', sep=',')
     y_test = pd.read_csv('data/y_test.csv', sep=',')
+    return X_test, y_test
 
-
-    pipelines_dir = "Pipeline"
-    if not os.path.exists(pipelines_dir):
-        st.warning(f"📁 Dossier `{pipelines_dir}` introuvable. Assurez-vous d’avoir sauvegardé vos pipelines.")
-        return
-
-    pipeline_files = [f for f in os.listdir(pipelines_dir) if f.endswith(".pkl")]
-    if not pipeline_files:
-        st.warning("⚠️ Aucun fichier `.pkl` trouvé. Veuillez entraîner et sauvegarder vos modèles.")
-        return
-
-    st.subheader("🔄 Évaluation automatique des modèles")
+@st.cache_data
+def evaluate_models(pipelines_dir, X_test, y_test):
+    """Évalue tous les modèles et retourne les performances"""
     performances = []
+    
+    for file in os.listdir(pipelines_dir):
+        if file.endswith(".pkl"):
+            model_short_name = file.replace("pipeline_", "").replace(".pkl", "")
+            model_display_name = model_name_map.get(model_short_name, model_short_name)
+            path = os.path.join(pipelines_dir, file)
 
-    for file in pipeline_files:
-        model_short_name = file.replace("pipeline_", "").replace(".pkl", "")
-        model_display_name = model_name_map.get(model_short_name, model_short_name)
-        path = os.path.join(pipelines_dir, file)
+            try:
+                pipeline = joblib.load(path)
+                y_pred = pipeline.predict(X_test)
 
-        try:
-            pipeline = joblib.load(path)
-            y_pred = pipeline.predict(X_test)
+                performances.append({
+                    "Modèle": model_display_name,
+                    "Accuracy": accuracy_score(y_test, y_pred),
+                    "Précision": precision_score(y_test, y_pred, average='weighted', zero_division=0),
+                    "Rappel": recall_score(y_test, y_pred, average='weighted', zero_division=0),
+                    "F1-score": f1_score(y_test, y_pred, average='weighted', zero_division=0),
+                    "short_name": model_short_name
+                })
 
-            acc = accuracy_score(y_test, y_pred)
-            prec = precision_score(y_test, y_pred, average='weighted', zero_division=0)
-            rec = recall_score(y_test, y_pred, average='weighted', zero_division=0)
-            f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+            except Exception as e:
+                st.error(f"❌ Erreur avec {model_display_name}: {str(e)}")
+    
+    return pd.DataFrame(performances).sort_values(by="F1-score", ascending=False)
 
-            performances.append({
-                "Modèle": model_display_name,
-                "Accuracy": acc,
-                "Précision": prec,
-                "Rappel": rec,
-                "F1-score": f1,
-                "short_name": model_short_name  # Pour la sélection plus tard
-            })
+def show_model_details(model_name, perf_df, X_test, y_test):
+    """Affiche les détails d'un modèle spécifique"""
+    selected_short_name = perf_df.loc[perf_df["Modèle"] == model_name, "short_name"].values[0]
+    pipeline = joblib.load(os.path.join(PIPELINES_DIR, f"pipeline_{selected_short_name}.pkl"))
+    y_pred = pipeline.predict(X_test)
 
-        except Exception as e:
-            st.error(f"❌ Erreur lors de l’évaluation de `{model_display_name}` : {e}")
+    # Rapport de classification
+    st.subheader("📊 Rapport de Performance")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Accuracy", f"{accuracy_score(y_test, y_pred):.2%}")
+        st.metric("Précision", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
+    with col2:
+        st.metric("Rappel", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
+        st.metric("F1-Score", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
 
-    if not performances:
-        st.warning("⚠️ Aucune performance calculée. Vérifiez le contenu de vos fichiers modèles.")
+    # Matrice de confusion
+    st.subheader("🧮 Matrice de Confusion")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(
+        confusion_matrix(y_test, y_pred),
+        annot=True, 
+        fmt='d', 
+        cmap='Blues',
+        ax=ax
+    )
+    ax.set_xlabel("Prédictions")
+    ax.set_ylabel("Vérité Terrain")
+    st.pyplot(fig)
+
+def page_modelisation():
+    st.title("📊 Modélisation - Évaluation des Modèles")
+
+    # Vérification des dossiers
+    if not os.path.exists(PIPELINES_DIR):
+        st.error(f"❌ Dossier `{PIPELINES_DIR}` introuvable")
         return
 
-    perf_df = pd.DataFrame(performances).sort_values(by="F1-score", ascending=False)
-    st.write("### 📈 Résultats comparatifs")
-    st.dataframe(perf_df.drop(columns=['short_name']), use_container_width=True)
+    # Chargement des données
+    X_test, y_test = load_test_data()
 
-    best_model_name = perf_df.iloc[0]["Modèle"]
-    st.success(f"🏆 Meilleur modèle (test set) : **{best_model_name}**")
+    # Évaluation des modèles
+    st.subheader("📈 Comparaison des Modèles")
+    perf_df = evaluate_models(PIPELINES_DIR, X_test, y_test)
 
-    st.subheader("🔍 Analyse détaillée d’un modèle")
-    # Utilisation des noms complets pour la sélection
-    selected_display_name = st.selectbox("Sélectionner un modèle :", perf_df["Modèle"].tolist())
-    # Récupérer le short_name correspondant
-    selected_short_name = perf_df.loc[perf_df["Modèle"] == selected_display_name, "short_name"].values[0]
+    if perf_df.empty:
+        st.warning("Aucun modèle valide trouvé")
+        return
 
-    selected_pipeline = joblib.load(os.path.join(pipelines_dir, f"pipeline_{selected_short_name}.pkl"))
-    y_pred_selected = selected_pipeline.predict(X_test)
+    # Affichage des résultats
+    st.dataframe(
+        perf_df.style
+            .background_gradient(subset=['Accuracy', 'F1-score'], cmap='Blues')
+            .format("{:.2%}", subset=['Accuracy', 'Précision', 'Rappel', 'F1-score']),
+        use_container_width=True
+    )
 
-    st.write("### 📄 Rapport de Classification")
-    report = classification_report(y_test, y_pred_selected, output_dict=True, zero_division=0)
-    report_df = pd.DataFrame(report).transpose()
-    st.dataframe(report_df)
+    # Meilleur modèle
+    best_model = perf_df.iloc[0]
+    st.success(f"🏆 Meilleur modèle: **{best_model['Modèle']}** (F1-Score: {best_model['F1-score']:.2%})")
 
-    st.write("### 📊 Matrice de Confusion")
-    cm = confusion_matrix(y_test, y_pred_selected)
-    fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', ax=ax)
-    ax.set_xlabel("Valeur Prédite")
-    ax.set_ylabel("Valeur Réelle")
-    st.pyplot(fig)
+    # Analyse détaillée
+    st.subheader("🔍 Analyse par Modèle")
+    selected_model = st.selectbox(
+        "Choisir un modèle à analyser",
+        perf_df["Modèle"],
+        index=0
+    )
+    
+    show_model_details(selected_model, perf_df, X_test, y_test)
+
+# Pour tester directement le module
+if __name__ == "__main__":
+    page_modelisation()
