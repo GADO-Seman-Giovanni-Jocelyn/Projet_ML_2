@@ -64,10 +64,10 @@ Ce projet vise à prédire la présence d'une maladie cardiaque à partir de don
 ---
 ## 🤝 Contributeurs
 
-- [![Cheikna Amala YATABARE](https://img.shields.io/badge/Contributor-Cheikna_Amala-blue)]
-- [![Ousseynou DIOP](https://img.shields.io/badge/Contributor-Ousseynou_Diop-green)] 
-- [![Giovanni GADO](https://img.shields.io/badge/Contributor-Giovanni_Gado-orange)]
-- [![Omar THIAM](https://img.shields.io/badge/Contributor-Omar_Thiam-red)]
+- ![Cheikna Amala YATABARE](https://img.shields.io/badge/Contributor-Cheikna_Amala-blue)
+- ![Ousseynou DIOP](https://img.shields.io/badge/Contributor-Ousseynou_Diop-green)
+- ![Giovanni GADO](https://img.shields.io/badge/Contributor-Giovanni_Gado-orange)
+- ![Omar THIAM](https://img.shields.io/badge/Contributor-Omar_Thiam-red)
 
 ```
 
