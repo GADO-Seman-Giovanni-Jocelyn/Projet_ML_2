@@ -27,22 +27,15 @@ model_name_map = {
 }
 
 @st.cache_data
-def load_data():
-    return pd.read_csv(DATA_PATH, sep=';')
 
-def page_modelisation(data):
+def page_modelisation():
     st.title("📊 Modélisation - Évaluation des Modèles de Classification")
 
-    if TARGET not in data.columns:
-        st.error(f"❌ La colonne cible '{TARGET}' n'existe pas dans les données.")
-        return
 
-    X = data.drop(columns=[TARGET])
-    y = data[TARGET]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_test = pd.read_csv('data/X_test.csv', sep=',')
+    y_test = pd.read_csv('data/y_test.csv', sep=',')
+
 
     pipelines_dir = "Pipeline"
     if not os.path.exists(pipelines_dir):
